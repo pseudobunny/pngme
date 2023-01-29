@@ -1,7 +1,7 @@
 use crate::{chunk::Chunk, chunk_type::ChunkType, Error, Result};
 use std::{fmt, str::FromStr};
 
-struct Png {
+pub struct Png {
     chunks: Vec<Chunk>,
 }
 
@@ -49,11 +49,11 @@ impl Png {
         Png { chunks }
     }
 
-    fn append_chunk(&mut self, chunk: Chunk) {
+    pub fn append_chunk(&mut self, chunk: Chunk) {
         self.chunks.push(chunk)
     }
 
-    fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
+    pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
         let test_type =
             ChunkType::from_str(chunk_type).expect("ChunkType string to remove cannot be parsed");
 
@@ -76,14 +76,14 @@ impl Png {
         &self.chunks
     }
 
-    fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
+    pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
         let test_type =
             ChunkType::from_str(chunk_type).expect("ChunkType string to remove cannot be parsed");
 
         self.chunks.iter().find(|c| *c.chunk_type() == test_type)
     }
 
-    fn as_bytes(&self) -> Vec<u8> {
+    pub fn as_bytes(&self) -> Vec<u8> {
         Png::STANDARD_HEADER
             .into_iter()
             .chain(self.chunks.iter().flat_map(|c| c.as_bytes()))

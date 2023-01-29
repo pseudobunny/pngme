@@ -4,7 +4,7 @@ use std::path::PathBuf;
 #[derive(Parser)]
 pub struct Args {
     #[command(subcommand)]
-    action: Action,
+    pub action: Action,
 }
 
 #[derive(Subcommand)]

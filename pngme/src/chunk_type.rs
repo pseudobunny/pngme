@@ -55,6 +55,12 @@ impl fmt::Display for ChunkType {
 }
 
 impl ChunkType {
+    pub fn new(type_string: &str) -> Result<ChunkType> {
+        let chunk_type_bytes: [u8; 4] = type_string.as_bytes().try_into()?;
+
+        ChunkType::try_from(chunk_type_bytes)
+    }
+
     pub fn bytes(&self) -> [u8; 4] {
         self.bytes
     }
