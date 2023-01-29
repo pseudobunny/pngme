@@ -1,7 +1,7 @@
 use std::fmt;
 use std::str::{from_utf8, FromStr};
 
-use crate::Error;
+use crate::{Error, Result};
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct ChunkType {
@@ -21,7 +21,7 @@ fn is_valid_byte(b: u8) -> bool {
 impl TryFrom<[u8; 4]> for ChunkType {
     type Error = Error;
 
-    fn try_from(value: [u8; 4]) -> Result<Self, Self::Error> {
+    fn try_from(value: [u8; 4]) -> Result<Self> {
         Ok(ChunkType {
             bytes: value,
             flags: value
@@ -38,7 +38,7 @@ impl TryFrom<[u8; 4]> for ChunkType {
 impl FromStr for ChunkType {
     type Err = Error;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Self> {
         let value = s.as_bytes();
         if value.len() == 4 && s.chars().all(|c| is_valid_byte(c as u8)) {
             ChunkType::try_from([value[0], value[1], value[2], value[3]])

@@ -4,7 +4,7 @@ use std::path::PathBuf;
 #[derive(Parser)]
 pub struct Args {
     #[command(subcommand)]
-    action: Action
+    action: Action,
 }
 
 #[derive(Subcommand)]
@@ -18,7 +18,7 @@ pub enum Action {
         /// Message to Encode
         message: String,
         /// File to output message to
-        output: Option<PathBuf>
+        output: Option<PathBuf>,
     },
     /// Decodes a hidden message in a PNG File
     Decode {
@@ -38,5 +38,5 @@ pub enum Action {
     Print {
         /// Path to PNG file
         filename: PathBuf,
-    }
+    },
 }

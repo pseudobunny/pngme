@@ -1,4 +1,4 @@
-use crate::{chunk::Chunk, chunk_type::ChunkType, Error};
+use crate::{chunk::Chunk, chunk_type::ChunkType, Error, Result};
 use std::{fmt, str::FromStr};
 
 struct Png {
@@ -8,7 +8,7 @@ struct Png {
 impl TryFrom<&[u8]> for Png {
     type Error = Error;
 
-    fn try_from(data: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(data: &[u8]) -> Result<Self> {
         let header = &data[0..8];
 
         if header != Png::STANDARD_HEADER {
@@ -53,7 +53,7 @@ impl Png {
         self.chunks.push(chunk)
     }
 
-    fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk, Error> {
+    fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
         let test_type =
             ChunkType::from_str(chunk_type).expect("ChunkType string to remove cannot be parsed");
 
@@ -114,7 +114,7 @@ mod tests {
         Png::from_chunks(chunks)
     }
 
-    fn chunk_from_strings(chunk_type: &str, data: &str) -> Result<Chunk, Error> {
+    fn chunk_from_strings(chunk_type: &str, data: &str) -> Result<Chunk> {
         use std::str::FromStr;
 
         let chunk_type = ChunkType::from_str(chunk_type)?;

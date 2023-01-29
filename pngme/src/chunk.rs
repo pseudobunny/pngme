@@ -1,5 +1,5 @@
 use crate::chunk_type::ChunkType;
-use crate::Error;
+use crate::{Error, Result};
 use crc::Crc;
 use std::fmt;
 use std::str::from_utf8;
@@ -18,7 +18,7 @@ fn png_checksum(data: &[u8]) -> u32 {
 impl TryFrom<&[u8]> for Chunk {
     type Error = Error;
 
-    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(value: &[u8]) -> Result<Self> {
         // calculate length of chunk
         let length_buff: [u8; 4] = value[0..4].try_into()?;
         let length = u32::from_be_bytes(length_buff);
@@ -94,12 +94,12 @@ impl Chunk {
         self.crc
     }
 
-    pub fn data_as_string(&self) -> Result<String, Error> {
+    pub fn data_as_string(&self) -> Result<String> {
         let data_str = from_utf8(&self.data)?;
         Ok(data_str.to_string())
     }
 
-    pub fn type_and_data_as_string(&self) -> Result<String, Error> {
+    pub fn type_and_data_as_string(&self) -> Result<String> {
         let type_and_data = [self.chunk_type.bytes().to_vec(), self.data.clone()].concat();
         let type_and_data_str = from_utf8(&type_and_data)?;
         Ok(type_and_data_str.to_string())
