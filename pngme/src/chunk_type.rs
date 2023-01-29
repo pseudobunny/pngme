@@ -4,7 +4,7 @@ use std::str::{from_utf8, FromStr};
 use crate::Error;
 
 #[derive(PartialEq, Eq, Debug)]
-struct ChunkType {
+pub struct ChunkType {
     bytes: [u8; 4],
     flags: [bool; 4],
     all_ascii_letters: bool,
@@ -50,12 +50,12 @@ impl FromStr for ChunkType {
 
 impl fmt::Display for ChunkType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", from_utf8(&self.bytes).unwrap())
+        write!(f, "{}", from_utf8(&self.bytes).map_err(|_| fmt::Error)?)
     }
 }
 
 impl ChunkType {
-    fn bytes(&self) -> [u8; 4] {
+    pub fn bytes(&self) -> [u8; 4] {
         self.bytes
     }
 
@@ -75,7 +75,7 @@ impl ChunkType {
         self.flags[3]
     }
 
-    fn is_valid(&self) -> bool {
+    pub fn is_valid(&self) -> bool {
         self.all_ascii_letters && self.is_reserved_bit_valid()
     }
 }
