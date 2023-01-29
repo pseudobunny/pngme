@@ -4,7 +4,7 @@ use crc::Crc;
 use std::fmt;
 use std::str::from_utf8;
 
-struct Chunk {
+pub struct Chunk {
     length: u32,
     chunk_type: ChunkType,
     data: Vec<u8>,
@@ -40,7 +40,7 @@ impl TryFrom<&[u8]> for Chunk {
         }
 
         // Read CRC and validate
-        let crc_buff = value[end_of_data..value.len()].try_into()?;
+        let crc_buff = value[end_of_data..end_of_data + 4].try_into()?;
         let crc = u32::from_be_bytes(crc_buff);
 
         if png_checksum(&value[4..end_of_data]) != crc {
@@ -63,7 +63,7 @@ impl fmt::Display for Chunk {
 }
 
 impl Chunk {
-    fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk {
+    pub fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk {
         let checksum_data = chunk_type
             .bytes()
             .into_iter()
@@ -78,28 +78,34 @@ impl Chunk {
         }
     }
 
-    fn length(&self) -> u32 {
+    pub fn length(&self) -> u32 {
         self.length
     }
 
-    fn chunk_type(&self) -> &ChunkType {
+    pub fn chunk_type(&self) -> &ChunkType {
         &self.chunk_type
     }
 
-    fn data(&self) -> &[u8] {
+    pub fn data(&self) -> &[u8] {
         &self.data
     }
 
-    fn crc(&self) -> u32 {
+    pub fn crc(&self) -> u32 {
         self.crc
     }
 
-    fn data_as_string(&self) -> Result<String, Error> {
+    pub fn data_as_string(&self) -> Result<String, Error> {
         let data_str = from_utf8(&self.data)?;
         Ok(data_str.to_string())
     }
 
-    fn as_bytes(&self) -> Vec<u8> {
+    pub fn type_and_data_as_string(&self) -> Result<String, Error> {
+        let type_and_data = [self.chunk_type.bytes().to_vec(), self.data.clone()].concat();
+        let type_and_data_str = from_utf8(&type_and_data)?;
+        Ok(type_and_data_str.to_string())
+    }
+
+    pub fn as_bytes(&self) -> Vec<u8> {
         self.length
             .to_be_bytes()
             .into_iter()
